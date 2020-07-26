@@ -1,5 +1,12 @@
 [
   {
+    "name": "create",
+    "path": "/create",
+    "component": "/home/tugzera/projects/teste/bonaparte/frontend/pages/create.vue",
+    "chunkName": "pages/create",
+    "_name": "_43f4d3f4"
+  },
+  {
     "name": "index",
     "path": "/",
     "component": "/home/tugzera/projects/teste/bonaparte/frontend/pages/index.vue",

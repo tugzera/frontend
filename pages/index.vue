@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <a-card title="Lista filmes IMDB" class="card">
-      <a slot="extra" href="#">more</a>
+      <a slot="extra">
+        <nuxt-link to="/create">Adicionar</nuxt-link>
+      </a>
       <a-table
         :columns="columns"
         :data-source="data"
@@ -9,6 +11,46 @@
         :pagination="false"
         class="table"
       >
+        <div
+          slot="filterDropdown"
+          slot-scope="{
+            setSelectedKeys,
+            selectedKeys,
+            confirm,
+            clearFilters,
+            column,
+          }"
+          style="padding: 8px;"
+        >
+          <a-input
+            v-ant-ref="(c) => (searchInput = c)"
+            :placeholder="`Search ${column.dataIndex}`"
+            :value="selectedKeys[0]"
+            style="width: 188px; margin-bottom: 8px; display: block;"
+            @change="
+              (e) => setSelectedKeys(e.target.value ? [e.target.value] : [])
+            "
+            @pressEnter="
+              () => handleSearch(selectedKeys, confirm, column.dataIndex)
+            "
+          />
+          <a-button
+            type="primary"
+            icon="search"
+            size="small"
+            style="width: 90px; margin-right: 8px;"
+            @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+          >
+            Search
+          </a-button>
+          <a-button
+            size="small"
+            style="width: 90px;"
+            @click="() => handleReset(clearFilters)"
+          >
+            Reset
+          </a-button>
+        </div>
         <span slot="types" slot-scope="types">
           <a-tag :key="types" :color="handleColorType(types)">
             {{ handleTextType(types) }}
@@ -32,6 +74,20 @@ const columns = [
     title: 'Título',
     dataIndex: 'primary_title',
     key: 'primary_title',
+    scopedSlots: {
+      filterDropdown: 'filterDropdown',
+      filterIcon: 'searchIcon',
+      customRender: 'customRender',
+    },
+    onFilter: (value, record) =>
+      record.primary_title.toString().includes(value),
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => {
+          this.searchInput.focus()
+        }, 0)
+      }
+    },
   },
   {
     title: 'Título original',
@@ -71,7 +127,6 @@ export default {
     const response = await fetch(
       `http://127.0.0.1:3333/titles?page=${this.page}&search=${this.search}`
     ).then((res) => res.json())
-    console.log(this.page)
     this.data = response.data
     this.loading = false
     this.page = response.page
@@ -103,6 +158,18 @@ export default {
         return 'red'
       } else if (type === 'movie') {
         return 'orange'
+      } else if (type === 'tvMovie') {
+        return 'green'
+      } else if (type === 'tvSeries') {
+        return 'cyan'
+      } else if (type === 'tvMiniSeries') {
+        return 'purple'
+      } else if (type === 'tvEspecial') {
+        return 'yellow'
+      } else if (type === 'video') {
+        return 'blue'
+      } else if (type === 'videoGame') {
+        return 'lime'
       }
     },
     handleTextType(type) {
@@ -112,7 +179,32 @@ export default {
         return 'Curta metragem'
       } else if (type === 'movie') {
         return 'Filme'
+      } else if (type === 'tvMovie') {
+        return 'Filme TV'
+      } else if (type === 'tvSeries') {
+        return 'Série'
+      } else if (type === 'tvMiniSeries') {
+        return 'Mini série'
+      } else if (type === 'tvEspecial') {
+        return 'Especial TV'
+      } else if (type === 'video') {
+        return 'Video'
+      } else if (type === 'videoGame') {
+        return 'Vide-game'
       }
+    },
+    handleSearch(selectedKeys, confirm, dataIndex) {
+      confirm()
+      this.search = selectedKeys[0]
+      this.searchedColumn = dataIndex
+      this.loading = true
+      this.$fetch()
+    },
+    handleReset(clearFilters) {
+      clearFilters()
+      this.search = ''
+      this.loading = true
+      this.$fetch()
     },
   },
 }
