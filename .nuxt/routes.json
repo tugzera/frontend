@@ -3,14 +3,12 @@
     "name": "create",
     "path": "/create",
     "component": "/home/tugzera/projects/teste/bonaparte/frontend/pages/create.vue",
-    "chunkName": "pages/create",
-    "_name": "_43f4d3f4"
+    "chunkName": "pages/create"
   },
   {
     "name": "index",
     "path": "/",
     "component": "/home/tugzera/projects/teste/bonaparte/frontend/pages/index.vue",
-    "chunkName": "pages/index",
-    "_name": "_d4e30fec"
+    "chunkName": "pages/index"
   }
 ]

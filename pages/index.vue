@@ -106,11 +106,6 @@ const columns = [
     dataIndex: 'start_year',
   },
   {
-    title: 'Ano de encerramento',
-    key: 'end_year',
-    dataIndex: 'end_year',
-  },
-  {
     title: 'Duração',
     key: 'runtime',
     dataIndex: 'runtime',
@@ -120,6 +115,16 @@ const columns = [
     key: 'genres',
     dataIndex: 'genres',
   },
+  {
+    title: 'Avaliação',
+    key: 'rating.average_rating',
+    dataIndex: 'rating.average_rating',
+  },
+  {
+    title: 'Votos',
+    key: 'rating.num_votes',
+    dataIndex: 'rating.num_votes',
+  },
 ]
 
 export default {
@@ -128,6 +133,7 @@ export default {
       `http://127.0.0.1:3333/titles?page=${this.page}&search=${this.search}`
     ).then((res) => res.json())
     this.data = response.data
+    console.log(response.data)
     this.loading = false
     this.page = response.page
     this.total = response.total

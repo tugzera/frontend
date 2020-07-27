@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <a-card title="" class="card">
+    <a-card title="Cadastro novo título" class="card">
       <a slot="extra">
         <nuxt-link to="/">Voltar</nuxt-link>
       </a>
@@ -33,17 +33,58 @@
           />
         </a-form-item>
 
-        <a-form-item label="Gender">
+        <a-form-item label="Ano de lançamento">
+          <a-input
+            v-decorator="[
+              'start_year',
+              {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Ano de lançamento é obrigatório.',
+                  },
+                ],
+              },
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="Ano de encerrametno">
+          <a-input
+            v-decorator="[
+              'end_year',
+              {
+                rules: [{ required: false }],
+              },
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="Tempo de duração">
+          <a-input
+            v-decorator="[
+              'runtime',
+              {
+                rules: [
+                  {
+                    required: true,
+                    message: 'Tempo de duração é obrigatório.',
+                  },
+                ],
+              },
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="Tipo">
           <a-select
             v-decorator="[
               'title_type',
               {
-                rules: [
-                  { required: true, message: 'Please select your gender!' },
-                ],
+                rules: [{ required: true, message: 'Tipo é obrigatório.' }],
               },
             ]"
-            placeholder="Select a option and change input text above"
+            placeholder="Selecione o tipo"
             @change="handleSelectChange"
           >
             <a-select-option value="short">
@@ -75,6 +116,28 @@
             </a-select-option>
           </a-select>
         </a-form-item>
+
+        <a-form-item label="Indicação adulta">
+          <a-select
+            v-decorator="[
+              'is_adult',
+              {
+                rules: [
+                  { required: true, message: 'Indicação é obrigatório.' },
+                ],
+              },
+            ]"
+            placeholder="Selecione a indicação"
+            @change="handleSelectChange"
+          >
+            <a-select-option value="true">
+              Sim
+            </a-select-option>
+            <a-select-option value="false">
+              Não
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
           <a-button type="primary" html-type="submit">
             Submit
@@ -86,6 +149,8 @@
 </template>
 
 <script>
+import api from '../services/api'
+
 export default {
   data() {
     return {
@@ -98,7 +163,11 @@ export default {
       e.preventDefault()
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values)
+          // values.is_adult = values.is_adult === 'true' ? true : false
+          api
+            .post('/titles', values)
+            .then((item) => this.openNotification('success'))
+            .catch((error) => console.log(error))
         }
       })
     },
@@ -106,6 +175,12 @@ export default {
       console.log(value)
       this.form.setFieldsValue({
         note: `Hi, ${value === 'male' ? 'man' : 'lady'}!`,
+      })
+    },
+    openNotification(type) {
+      this.$notification[type]({
+        message: 'Título cadastrado com sucesso',
+        description: '',
       })
     },
   },
